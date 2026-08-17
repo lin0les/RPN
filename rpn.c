@@ -84,17 +84,33 @@ double pop(void){
 }
 
 int getop(char s[]){
-    int i, c;
+    int i, c, next;
 
-    while((s[0] = c = getch()) == ' ' || c == '\t')
+    while((c = getch()) == ' ' || c == '\t')
         ;
 
+    s[0] = c;
     s[1] = '\0';
 
-    if(!isdigit(c) && c != '.')
-        return c;
+    if(c == '-'){
+        next = getch();
+        if(isdigit(next)){
+            s[0] = '-';
+            s[1] = next;
+            i = 2;
+            c = next;
+            goto negative;
+        }
+        
+        c = '-';
+        ungetch(next);
+    }
 
     i = 0;
+
+negative:
+    if(!isdigit(c) && c != '.')
+        return c;
 
     if(isdigit(c))
         while(isdigit(s[++i] = c = getch()))
