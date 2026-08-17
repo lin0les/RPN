@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <math.h>
 
 #define MAXOP 100
 #define MAXVAL 100
@@ -45,6 +46,14 @@ int main(int argc, char *argv[]){
                     push(pop() / op2);
                 else
                     printf("error: zero divisor\n");
+                break;
+            case '%':
+                op2 = pop();
+
+                if(op2 == 0)
+                    printf("error: zero divisor\n");
+                else
+                    push(fmod(pop(), op2));
                 break;
             case '\n':
                 printf("\t%.8g\n", pop());
