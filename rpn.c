@@ -97,7 +97,7 @@ int getop(char s[]){
         if(isdigit(next)){
             s[0] = '-';
             s[1] = next;
-            i = 2;
+            i = 1;
             c = next;
             goto negative;
         }
