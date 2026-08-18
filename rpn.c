@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <math.h>
+#include <string.h>
 
 #define MAXOP 100
 #define MAXVAL 100
 #define NUMBER '0'
+#define FUNCTION 'f'
 #define BUFSIZE 100
 
 int sp = 0;
@@ -27,7 +29,7 @@ void clearstack(void);
 
 int main(int argc, char *argv[]){
     int type;
-    double op2;
+    double op1, op2;
     char s[MAXOP];
 
     while((type = getop(s)) != EOF){
@@ -75,6 +77,19 @@ int main(int argc, char *argv[]){
             case 'c':
                 clearstack();
                 break;
+            case FUNCTION:
+                if(strcmp(s, "sin") == 0){
+                    push(sin(pop()));
+                } else if(strcmp(s, "exp") == 0){
+                    push(exp(pop()));
+                } else if(strcmp(s, "pow") == 0){
+                    op2 = pop();
+                    op1 = pop();
+                    push(pow(op1, op2));
+                } else {
+                    printf("error: unknown function %s\n", s);
+                }
+                break;
             default:
                 printf("error: unknown command %s\n", s);
                 break;
@@ -105,6 +120,26 @@ int getop(char s[]){
 
     while((c = getch()) == ' ' || c == '\t')
         ;
+
+    if(isalpha(c)){
+        s[0] = c;
+
+        int stock = c;
+        
+        i = 0;
+        while(isalpha(c = getch())){
+            s[++i] = c;
+        }
+        
+        s[++i] = '\0';
+
+        ungetch(c);
+
+        if(strlen(s) > 1)
+            return FUNCTION;
+
+        c = stock;
+    }
 
     s[0] = c;
     s[1] = '\0';
