@@ -106,25 +106,6 @@ int getop(char s[]){
     while((c = getch()) == ' ' || c == '\t')
         ;
 
-/*
-    if(c == 'p'){
-        printtop2();
-        while((c = getch()) == ' ' || c == '\t')
-            ;
-    } else if(c == 'd'){
-        duplicate();
-        while((c = getch()) == ' ' || c == '\t')
-            ;
-    } else if(c == 's'){
-        swaplast2();
-        while((c = getch()) == ' ' || c == '\t')
-            ;
-    } else if(c == 'c'){
-        clearstack();
-        while((c = getch()) == ' ' || c == '\t')
-            ;
-    }
-*/
     s[0] = c;
     s[1] = '\0';
 
