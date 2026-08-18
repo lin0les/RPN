@@ -63,6 +63,18 @@ int main(int argc, char *argv[]){
             case '\n':
                 printf("Result: %.8g\n", pop());
                 break;
+            case 'p':
+                printtop2();
+                break;
+            case 'd':
+                duplicate();
+                break;
+            case 's':
+                swaplast2();
+                break;
+            case 'c':
+                clearstack();
+                break;
             default:
                 printf("error: unknown command %s\n", s);
                 break;
@@ -94,6 +106,7 @@ int getop(char s[]){
     while((c = getch()) == ' ' || c == '\t')
         ;
 
+/*
     if(c == 'p'){
         printtop2();
         while((c = getch()) == ' ' || c == '\t')
@@ -111,7 +124,7 @@ int getop(char s[]){
         while((c = getch()) == ' ' || c == '\t')
             ;
     }
-
+*/
     s[0] = c;
     s[1] = '\0';
 
