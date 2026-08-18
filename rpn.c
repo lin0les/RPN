@@ -19,6 +19,8 @@ double pop(void);
 int getch(void);
 void ungetch(int);
 
+void printtop2(void);
+
 
 int main(int argc, char *argv[]){
     int type;
@@ -89,6 +91,12 @@ int getop(char s[]){
     while((c = getch()) == ' ' || c == '\t')
         ;
 
+    if(c == 'p'){
+        printtop2();
+        while((c = getch()) == ' ' || c == '\t')
+            ;
+    }
+
     s[0] = c;
     s[1] = '\0';
 
@@ -137,4 +145,8 @@ void ungetch(int c){
         printf("ungetch: too many characters\n");
     else
         buf[bufp++] = c;
+}
+
+void printtop2(void){
+    printf("%f,%f\n", val[sp - 2], val[sp - 1]);
 }
