@@ -21,6 +21,7 @@ void ungetch(int);
 
 void printtop2(void);
 void duplicate(void);
+void swaplast2(void);
 
 
 int main(int argc, char *argv[]){
@@ -100,7 +101,12 @@ int getop(char s[]){
         duplicate();
         while((c = getch()) == ' ' || c == '\t')
             ;
+    } else if(c == 's'){
+        swaplast2();
+        while((c = getch()) == ' ' || c == '\t')
+            ;
     }
+
 
     s[0] = c;
     s[1] = '\0';
@@ -158,4 +164,11 @@ void printtop2(void){
 
 void duplicate(void){
     val[sp++] = val[sp - 1];
+}
+
+void swaplast2(void){
+    double temp;
+    temp = val[sp - 2];
+    val[sp - 2] = val[sp - 1];
+    val[sp - 1] = temp;
 }
