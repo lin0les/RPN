@@ -20,6 +20,7 @@ int getch(void);
 void ungetch(int);
 
 void printtop2(void);
+void duplicate(void);
 
 
 int main(int argc, char *argv[]){
@@ -58,7 +59,7 @@ int main(int argc, char *argv[]){
                     push(fmod(pop(), op2));
                 break;
             case '\n':
-                printf("\t%.8g\n", pop());
+                printf("Result: %.8g\n", pop());
                 break;
             default:
                 printf("error: unknown command %s\n", s);
@@ -93,6 +94,10 @@ int getop(char s[]){
 
     if(c == 'p'){
         printtop2();
+        while((c = getch()) == ' ' || c == '\t')
+            ;
+    } else if(c == 'd'){
+        duplicate();
         while((c = getch()) == ' ' || c == '\t')
             ;
     }
@@ -148,5 +153,9 @@ void ungetch(int c){
 }
 
 void printtop2(void){
-    printf("%f,%f\n", val[sp - 2], val[sp - 1]);
+    printf("P: %.1f, %.1f\n", val[sp - 2], val[sp - 1]);
+}
+
+void duplicate(void){
+    val[sp++] = val[sp - 1];
 }
