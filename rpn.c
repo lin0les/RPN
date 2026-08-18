@@ -22,6 +22,7 @@ void ungetch(int);
 void printtop2(void);
 void duplicate(void);
 void swaplast2(void);
+void clearstack(void);
 
 
 int main(int argc, char *argv[]){
@@ -105,8 +106,11 @@ int getop(char s[]){
         swaplast2();
         while((c = getch()) == ' ' || c == '\t')
             ;
+    } else if(c == 'c'){
+        clearstack();
+        while((c = getch()) == ' ' || c == '\t')
+            ;
     }
-
 
     s[0] = c;
     s[1] = '\0';
@@ -163,12 +167,27 @@ void printtop2(void){
 }
 
 void duplicate(void){
-    val[sp++] = val[sp - 1];
+    if(sp < MAXVAL)
+        val[sp++] = val[sp - 1];
+    else
+        printf("error: can't duplicate last element, because stack is full\n");
 }
 
 void swaplast2(void){
     double temp;
-    temp = val[sp - 2];
-    val[sp - 2] = val[sp - 1];
-    val[sp - 1] = temp;
+
+    if(sp >= 2){
+        temp = val[sp - 2];
+        val[sp - 2] = val[sp - 1];
+        val[sp - 1] = temp;
+    } else {
+        printf("error: not enough operands\n");
+    }
+}
+
+void clearstack(void){
+    while(sp >= 0){
+        val[sp--] = 0;
+    }
+    sp++;
 }
