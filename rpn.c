@@ -3,10 +3,12 @@
 #include <ctype.h>
 #include <math.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define MAXOP 100
 #define MAXVAL 100
 #define NUMBER '0'
+#define VARIABLE 'v'
 #define FUNCTION 'f'
 #define BUFSIZE 100
 
@@ -14,6 +16,10 @@ int sp = 0;
 double val[MAXVAL];
 char buf[BUFSIZE];
 int bufp = 0;
+double variables[26];
+bool used[26] = {false};
+double last;
+int ch;
 
 int getop(char[]);
 void push(double);
@@ -62,20 +68,18 @@ int main(int argc, char *argv[]){
                 else
                     push(fmod(pop(), op2));
                 break;
+            case '=':
+                if(sp > 0){
+                    variables[ch - 'a'] = val[sp - 1];
+                    used[ch - 'a'] = true;
+
+                } else{
+                    printf("error: no operand to assign to '%c'\n", ch);
+                }
+                break;
             case '\n':
-                printf("Result: %.8g\n", pop());
-                break;
-            case 'p':
-                printtop2();
-                break;
-            case 'd':
-                duplicate();
-                break;
-            case 's':
-                swaplast2();
-                break;
-            case 'c':
-                clearstack();
+                last = pop();
+                printf("Result: %.8g\n", last);
                 break;
             case FUNCTION:
                 if(strcmp(s, "sin") == 0){
@@ -86,9 +90,23 @@ int main(int argc, char *argv[]){
                     op2 = pop();
                     op1 = pop();
                     push(pow(op1, op2));
+                } else if(strcmp(s, "print") == 0){
+                    printtop2();
+                } else if(strcmp(s, "swap") == 0){
+                    swaplast2();
+                } else if(strcmp(s, "duplicate") == 0){
+                    duplicate();
+                } else if(strcmp(s, "clear") == 0){
+                    clearstack();
                 } else {
                     printf("error: unknown function %s\n", s);
                 }
+                break;
+            case VARIABLE:
+                push(variables[s[0] - 'a']);
+                break;
+            case '@':
+                push(last);
                 break;
             default:
                 printf("error: unknown command %s\n", s);
@@ -125,12 +143,12 @@ int getop(char s[]){
         s[0] = c;
 
         int stock = c;
-        
+
         i = 0;
         while(isalpha(c = getch())){
             s[++i] = c;
         }
-        
+
         s[++i] = '\0';
 
         ungetch(c);
@@ -138,8 +156,30 @@ int getop(char s[]){
         if(strlen(s) > 1)
             return FUNCTION;
 
-        c = stock;
+        while((c = getch()) == ' ' || c == '\t')
+            ;
+
+        if(c == '='){
+            ch = stock;
+            return '=';
+        }
+
+        if(used[stock - 'a'] == false){
+            printf("error: '%c' has no value yet, stack will be cleared\n", ch);
+            strcpy(s, "clear");
+            return FUNCTION;
+        }
+        
+        ungetch(c);
+
+        s[0] = stock;
+        s[1] = '\0';
+
+        return VARIABLE;
     }
+
+    if(c == '@')
+        return '@';
 
     s[0] = c;
     s[1] = '\0';
@@ -153,7 +193,7 @@ int getop(char s[]){
             c = next;
             goto negative;
         }
-        
+
         c = '-';
         ungetch(next);
     }
@@ -192,7 +232,10 @@ void ungetch(int c){
 }
 
 void printtop2(void){
-    printf("P: %.1f, %.1f\n", val[sp - 2], val[sp - 1]);
+    if(sp >= 2)
+        printf("P: %.1f, %.1f\n", val[sp - 2], val[sp - 1]);
+    else
+        printf("error: not enough operands\n");
 }
 
 void duplicate(void){
@@ -215,8 +258,6 @@ void swaplast2(void){
 }
 
 void clearstack(void){
-    while(sp >= 0){
-        val[sp--] = 0;
-    }
-    sp++;
+    sp = 0;
 }
+
