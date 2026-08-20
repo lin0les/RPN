@@ -31,6 +31,7 @@ void printtop2(void);
 void duplicate(void);
 void swaplast2(void);
 void clearstack(void);
+void ungets(char[]);
 
 
 int main(int argc, char *argv[]){
@@ -261,3 +262,9 @@ void clearstack(void){
     sp = 0;
 }
 
+void ungets(char s[]){
+    int i;
+
+    for(i = strlen(s) - 1; i >= 0; i--)
+        ungetch(s[i]);
+}
