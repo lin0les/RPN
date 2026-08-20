@@ -10,16 +10,17 @@
 #define NUMBER '0'
 #define VARIABLE 'v'
 #define FUNCTION 'f'
-#define BUFSIZE 100
+#define MAXINPUT 200
 
 int sp = 0;
 double val[MAXVAL];
-char buf[BUFSIZE];
-int bufp = 0;
 double variables[26];
 bool used[26] = {false};
 double last;
 int ch;
+char input[MAXINPUT];
+int ip = 0;
+int buf = EOF;
 
 int getop(char[]);
 void push(double);
@@ -222,14 +223,22 @@ negative:
 }
 
 int getch(void){
-    return (bufp > 0) ? buf[--bufp] : getchar();
+    int c;
+
+    if(buf != EOF){
+        c = buf;
+        buf = EOF;
+        return c;
+    }
+
+    if(ip < MAXINPUT)
+        return input[ip++] = getchar();
+    else
+        printf("error: input[] overflow\n");
 }
 
 void ungetch(int c){
-    if(bufp >= BUFSIZE)
-        printf("ungetch: too many characters\n");
-    else
-        buf[bufp++] = c;
+    buf = c;
 }
 
 void printtop2(void){
