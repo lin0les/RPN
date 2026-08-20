@@ -10,7 +10,6 @@
 #define NUMBER '0'
 #define VARIABLE 'v'
 #define FUNCTION 'f'
-#define MAXINPUT 200
 
 int sp = 0;
 double val[MAXVAL];
@@ -18,9 +17,8 @@ double variables[26];
 bool used[26] = {false};
 double last;
 int ch;
-char input[MAXINPUT];
-int ip = 0;
-int buf = EOF;
+int buf;
+bool buf_full = false;
 
 int getop(char[]);
 void push(double);
@@ -222,23 +220,20 @@ negative:
     return NUMBER;
 }
 
-int getch(void){
-    int c;
-
-    if(buf != EOF){
-        c = buf;
-        buf = EOF;
-        return c;
+int getch(void)
+{
+    if(buf_full){
+        buf_full = false;
+        return buf;
     }
 
-    if(ip < MAXINPUT)
-        return input[ip++] = getchar();
-    else
-        printf("error: input[] overflow\n");
+    return getchar();
 }
 
-void ungetch(int c){
+void ungetch(int c)
+{
     buf = c;
+    buf_full = true;
 }
 
 void printtop2(void){
