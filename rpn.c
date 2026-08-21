@@ -10,6 +10,7 @@
 #define NUMBER '0'
 #define VARIABLE 'v'
 #define FUNCTION 'f'
+#define MAXLEN 50
 
 int sp = 0;
 double val[MAXVAL];
@@ -19,6 +20,7 @@ double last;
 int ch;
 int buf;
 bool buf_full = false;
+char s[MAXLEN];
 
 int getop(char[]);
 void push(double);
@@ -31,7 +33,7 @@ void duplicate(void);
 void swaplast2(void);
 void clearstack(void);
 void ungets(char[]);
-
+int getline(char []);
 
 int main(int argc, char *argv[]){
     int type;
@@ -133,11 +135,28 @@ double pop(void){
     }
 }
 
+int getline(char s[]){
+    while((c = getchar()) && c != '\n' && c != EOF){
+        if(i < MAXLEN)
+            s[i++] = c;
+        else
+            printf("You reached to max len\n");
+    }
+    if(c == '\n'){
+        s[i++] = '\n';
+    }
+    s[i] = '\0';
+
+    return j;
+}
+
 int getop(char s[]){
     int i, c, next;
 
     while((c = getch()) == ' ' || c == '\t')
         ;
+
+    while(getline());
 
     if(isalpha(c)){
         s[0] = c;
