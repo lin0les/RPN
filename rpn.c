@@ -20,20 +20,19 @@ double last;
 int ch;
 int buf;
 bool buf_full = false;
-char s[MAXLEN];
+char input[MAXLEN];
+int ip = 0;
+bool ii = false;
 
 int getop(char[]);
 void push(double);
 double pop(void);
-int getch(void);
-void ungetch(int);
 
 void printtop2(void);
 void duplicate(void);
 void swaplast2(void);
 void clearstack(void);
-void ungets(char[]);
-int getline(char []);
+int mygetline(char []);
 
 int main(int argc, char *argv[]){
     int type;
@@ -82,6 +81,7 @@ int main(int argc, char *argv[]){
             case '\n':
                 last = pop();
                 printf("Result: %.8g\n", last);
+                ii = false;
                 break;
             case FUNCTION:
                 if(strcmp(s, "sin") == 0){
@@ -135,9 +135,12 @@ double pop(void){
     }
 }
 
-int getline(char s[]){
-    while((c = getchar()) && c != '\n' && c != EOF){
-        if(i < MAXLEN)
+int mygetline(char s[]){
+    int i = 0;
+    int c;
+    ip = 0;
+    while((c = getchar()) != '\n' && c != EOF){
+        if(i < MAXLEN - 1)
             s[i++] = c;
         else
             printf("You reached to max len\n");
@@ -146,113 +149,106 @@ int getline(char s[]){
         s[i++] = '\n';
     }
     s[i] = '\0';
-
-    return j;
+    ii = true;
+    return i;
 }
 
 int getop(char s[]){
     int i, c, next;
 
-    while((c = getch()) == ' ' || c == '\t')
-        ;
+    if(!ii)
+        mygetline(input);
 
-    while(getline());
-
-    if(isalpha(c)){
-        s[0] = c;
-
-        int stock = c;
-
-        i = 0;
-        while(isalpha(c = getch())){
-            s[++i] = c;
-        }
-
-        s[++i] = '\0';
-
-        ungetch(c);
-
-        if(strlen(s) > 1)
-            return FUNCTION;
-
-        while((c = getch()) == ' ' || c == '\t')
-            ;
-
-        if(c == '='){
-            ch = stock;
-            return '=';
-        }
-
-        if(used[stock - 'a'] == false){
-            printf("error: '%c' has no value yet, stack will be cleared\n", ch);
-            strcpy(s, "clear");
-            return FUNCTION;
-        }
+    while((c = input[ip]) != '\0'){
         
-        ungetch(c);
+        if(c == ' ' || c == '\t')
+            while((c = input[ip]) == ' ' || c == '\t'){
+                ip++;
+            }
+        
+        if(isalpha(c)){
+            s[0] = input[ip++];
 
-        s[0] = stock;
+            int stock = c;
+
+            i = 0;
+            while(isalpha(c = input[ip++])){
+                s[++i] = c;
+            }
+
+            s[++i] = '\0';
+
+            ip--;
+
+            if(strlen(s) > 1)
+                return FUNCTION;
+
+            while((c = input[ip++]) == ' ' || c == '\t')
+                ;
+
+            if(c == '='){
+                ch = stock;
+                return '=';
+            }
+
+            if(used[stock - 'a'] == false){
+                printf("error: '%c' has no value yet, stack will be cleared\n", ch);
+                strcpy(s, "clear");
+                return FUNCTION;
+            }
+            
+            ip--;
+
+            s[0] = stock;
+            s[1] = '\0';
+
+            return VARIABLE;
+        }
+
+        if(c == '@'){
+            ip++;
+            return '@';
+        }
+
+        s[0] = c;
         s[1] = '\0';
 
-        return VARIABLE;
-    }
+        if(c == '-'){
+            next = input[ip++];
+            if(isdigit(next)){
+                s[0] = '-';
+                s[1] = next;
+                i = 1;
+                c = next;
+                goto negative;
+            }
 
-    if(c == '@')
-        return '@';
-
-    s[0] = c;
-    s[1] = '\0';
-
-    if(c == '-'){
-        next = getch();
-        if(isdigit(next)){
-            s[0] = '-';
-            s[1] = next;
-            i = 1;
-            c = next;
-            goto negative;
+            c = '-';
+            ip--;
         }
 
-        c = '-';
-        ungetch(next);
-    }
-
-    i = 0;
+        i = 0;
 
 negative:
-    if(!isdigit(c) && c != '.')
-        return c;
+        if(!isdigit(c) && c != '.'){
+            ip++;
+            return c;
+        }
 
-    if(isdigit(c))
-        while(isdigit(s[++i] = c = getch()))
-            ;
+        if(isdigit(c))
+            while(isdigit(s[++i] = c = input[++ip]))
+                ;
 
-    if(c == '.')
-        while(isdigit(s[++i] = c = getch()))
-            ;
+        if(c == '.')
+            while(isdigit(s[++i] = c = input[++ip]))
+                ;
 
-    s[i] = '\0';
+        s[i] = '\0';
 
-    if(c != EOF)
-        ungetch(c);
-
-    return NUMBER;
-}
-
-int getch(void)
-{
-    if(buf_full){
-        buf_full = false;
-        return buf;
+        return NUMBER;
     }
 
-    return getchar();
-}
-
-void ungetch(int c)
-{
-    buf = c;
-    buf_full = true;
+    return EOF;
 }
 
 void printtop2(void){
@@ -283,11 +279,4 @@ void swaplast2(void){
 
 void clearstack(void){
     sp = 0;
-}
-
-void ungets(char s[]){
-    int i;
-
-    for(i = strlen(s) - 1; i >= 0; i--)
-        ungetch(s[i]);
 }
