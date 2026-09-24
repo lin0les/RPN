@@ -15,6 +15,9 @@ int main(int argc, char *argv[])
     int type;
     double op1, op2;
     char s[MAXOP];
+    
+    if(copyargs(argc, argv))
+        return 1;
 
     while ((type = getop(s)) != EOF) {
 

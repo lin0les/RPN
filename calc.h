@@ -13,6 +13,7 @@ double pop(void);
 int stack_size(void);
 double stack_top(void);
 
+int copyargs(int, char *[]);
 int getop(char []);
 
 void printtop2(void);
