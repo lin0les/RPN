@@ -46,9 +46,10 @@ void printtop2(void)
 
 void duplicate(void)
 {
-    if (sp < MAXVAL)
-        val[sp++] = val[sp - 1];
-    else
+    if (sp < MAXVAL){
+        val[sp] = val[sp - 1];
+        sp++;
+    } else
         printf("error: can't duplicate last element, because stack is full\n");
 }
 

@@ -5,11 +5,9 @@
 
 #include "calc.h"
 
-#define MAXLEN 13
-
-static char input[MAXLEN];
+char input[MAXLEN];
 static int ip = 0;
-static bool ii = false;
+//static bool ii = false;
 
 /*
 static int mygetline(char s[])
@@ -37,6 +35,7 @@ static int mygetline(char s[])
 }
 */
 
+/*
 int copyargs(int argc, char *argv[]){
 
     size_t counter_high=0;
@@ -75,7 +74,7 @@ int copyargs(int argc, char *argv[]){
     return 0;
 
 }
-
+*/
 int getop(char s[]){
 
     int i, c, next;

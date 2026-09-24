@@ -2,7 +2,7 @@
 #define CALC_H
 
 #define MAXOP 100
-
+#define MAXLEN 100
 #define NUMBER   '0'
 #define VARIABLE 'v'
 #define FUNCTION 'f'
